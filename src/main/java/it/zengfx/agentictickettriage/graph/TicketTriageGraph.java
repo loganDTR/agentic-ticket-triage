@@ -16,14 +16,16 @@ import static org.bsc.langgraph4j.action.AsyncEdgeAction.edge_async;
 public class TicketTriageGraph {
     public final CompiledGraph<TicketTriageState> graph;
 
-    public TicketTriageGraph(LlmClassifyTicketNode llmClassifyTicketNode) throws GraphStateException {
+    public TicketTriageGraph(LlmClassifyTicketNode llmClassifyTicketNode,
+                             BillingAnswerNode billingAnswerNode
+                             ) throws GraphStateException {
         this.graph = new StateGraph<>(
                 TicketTriageState.SCHEMA,
                 TicketTriageState::new
         )
                 .addNode("classifyTicket", node_async(llmClassifyTicketNode))
                 .addNode("decideRoute", node_async(new DecideRouteNode()))
-                .addNode("billingAnswer", node_async(new BillingAnswerNode()))
+                .addNode("billingAnswer", node_async(billingAnswerNode))
                 .addNode("technicalAnswer", node_async(new TechnicalAnswerNode()))
                 .addNode("humanEscalationAnswer", node_async(new HumanEscalationAnswerNode()))
                 .addEdge(START, "classifyTicket")
