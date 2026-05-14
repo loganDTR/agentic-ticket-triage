@@ -21,6 +21,7 @@ public class TicketTriageService {
         return new TriageResponse(
           finalState.text(),
           finalState.category(),
+          finalState.conficence(),
           finalState.route(),
           finalState.answer()
         );

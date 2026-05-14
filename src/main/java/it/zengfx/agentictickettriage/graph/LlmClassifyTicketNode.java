@@ -20,7 +20,9 @@ public class LlmClassifyTicketNode  implements NodeAction<TicketTriageState> {
     @Override
     public Map<String, Object> apply(TicketTriageState state) {
         ClassificationResult result = agent.classify(state.text());
-        TicketCategory category = result.category();
-        return Map.of(TicketTriageState.CATEGORY, category);
+        return Map.of(
+                TicketTriageState.CATEGORY, result.category(),
+                TicketTriageState.CONFICENCE, result.confidence()
+        );
     }
 }

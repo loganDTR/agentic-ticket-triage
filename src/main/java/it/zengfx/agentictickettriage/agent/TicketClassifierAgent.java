@@ -13,7 +13,11 @@ public interface TicketClassifierAgent {
             - BILLING
             - GENERAL
             - ESCALATION
-
+            Also return a confidence score from 0 to 100.
+    
+            Use low confidence when the ticket is ambiguous, too short, unclear,
+            or could belong to multiple categories.
+            
             Respond only with the structured result.            
             """)
     ClassificationResult classify(@UserMessage String userMessage);

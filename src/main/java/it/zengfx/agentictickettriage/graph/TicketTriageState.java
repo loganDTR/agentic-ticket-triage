@@ -10,12 +10,14 @@ import java.util.Map;
 public class TicketTriageState extends AgentState {
     public static final String TEXT = "text";
     public static final String CATEGORY = "category";
+    public static final String CONFICENCE = "conficence";
     public static final String ROUTE = "route";
     public static final String ANSWER = "answer";
 
     public static final Map<String, Channel<?>> SCHEMA = Map.of(
             TEXT, Channels.base(() -> ""),
             CATEGORY, Channels.base(() -> TicketCategory.GENERAL),
+            CONFICENCE, Channels.base(() -> ""),
             ROUTE, Channels.base(() -> ""),
             ANSWER, Channels.base(() -> "")
     );
@@ -30,6 +32,10 @@ public class TicketTriageState extends AgentState {
 
     public TicketCategory category(){
         return this.<TicketCategory>value(CATEGORY).orElse(TicketCategory.GENERAL);
+    }
+
+    public int conficence() {
+        return this.<Integer>value(CONFICENCE).orElse(0);
     }
 
     public String route(){
