@@ -9,7 +9,8 @@ public class HumanEscalationAnswerNode implements NodeAction<TicketTriageState> 
     public Map<String, Object> apply(TicketTriageState state) {
         return Map.of(
                 TicketTriageState.ANSWER,
-                "Non riesco a classificare il ticket con sufficiente precisione. Escalo a un operatore umano."
+                "Non riesco a classificare il ticket con sufficiente precisione. Escalo a un operatore umano.",
+                TicketTriageState.EXECUTION_TRACE, state.traceWith("humanEscalationAnswer")
         );
     }
 }

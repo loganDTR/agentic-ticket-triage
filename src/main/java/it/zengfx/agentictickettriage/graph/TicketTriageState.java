@@ -5,21 +5,25 @@ import org.bsc.langgraph4j.state.AgentState;
 import org.bsc.langgraph4j.state.Channel;
 import org.bsc.langgraph4j.state.Channels;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 public class TicketTriageState extends AgentState {
     public static final String TEXT = "text";
     public static final String CATEGORY = "category";
-    public static final String CONFICENCE = "conficence";
+    public static final String CONFIDENCE = "confidence";
     public static final String ROUTE = "route";
     public static final String ANSWER = "answer";
+    public static final String EXECUTION_TRACE = "executionTrace";
 
     public static final Map<String, Channel<?>> SCHEMA = Map.of(
             TEXT, Channels.base(() -> ""),
             CATEGORY, Channels.base(() -> TicketCategory.GENERAL),
-            CONFICENCE, Channels.base(() -> ""),
+            CONFIDENCE, Channels.base(() -> ""),
             ROUTE, Channels.base(() -> ""),
-            ANSWER, Channels.base(() -> "")
+            ANSWER, Channels.base(() -> ""),
+            EXECUTION_TRACE, Channels.base(ArrayList::new)
     );
 
     public TicketTriageState(Map<String, Object> initData) {
@@ -34,8 +38,8 @@ public class TicketTriageState extends AgentState {
         return this.<TicketCategory>value(CATEGORY).orElse(TicketCategory.GENERAL);
     }
 
-    public int conficence() {
-        return this.<Integer>value(CONFICENCE).orElse(0);
+    public int confidence() {
+        return this.<Integer>value(CONFIDENCE).orElse(0);
     }
 
     public String route(){
@@ -44,5 +48,16 @@ public class TicketTriageState extends AgentState {
 
     public String answer(){
         return this.<String>value(ANSWER).orElse("");
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<String> executionTrace() {
+        return this.<List<String>>value(EXECUTION_TRACE).orElseGet(ArrayList::new);
+    }
+
+    public List<String> traceWith(String nodeName) {
+        List<String> trace = new ArrayList<>(executionTrace());
+        trace.add(nodeName);
+        return trace;
     }
 }

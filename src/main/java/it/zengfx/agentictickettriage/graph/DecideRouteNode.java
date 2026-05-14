@@ -10,7 +10,7 @@ public class DecideRouteNode implements NodeAction<TicketTriageState> {
 
     @Override
     public Map<String, Object> apply(TicketTriageState state) throws Exception {
-        if (state.conficence() < MIN_CONFIDENCE) {
+        if (state.confidence() < MIN_CONFIDENCE) {
             return Map.of(TicketTriageState.ROUTE, "humanEscalation");
         }
 
@@ -19,6 +19,8 @@ public class DecideRouteNode implements NodeAction<TicketTriageState> {
             case TECHNICAL -> "technicalSupport";
             case GENERAL, ESCALATION -> "humanEscalation";
         };
-        return Map.of(TicketTriageState.ROUTE, route);
+        return Map.of(TicketTriageState.ROUTE, route,
+                TicketTriageState.EXECUTION_TRACE, state.traceWith("decideRoute")
+                );
     }
 }

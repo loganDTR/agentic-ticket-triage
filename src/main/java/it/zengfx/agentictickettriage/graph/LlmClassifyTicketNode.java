@@ -22,7 +22,8 @@ public class LlmClassifyTicketNode  implements NodeAction<TicketTriageState> {
         ClassificationResult result = agent.classify(state.text());
         return Map.of(
                 TicketTriageState.CATEGORY, result.category(),
-                TicketTriageState.CONFICENCE, result.confidence()
+                TicketTriageState.CONFIDENCE, result.confidence(),
+                TicketTriageState.EXECUTION_TRACE, state.traceWith("classifyTicket")
         );
     }
 }

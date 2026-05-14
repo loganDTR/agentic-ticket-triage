@@ -21,8 +21,8 @@ public class BillingAnswerNode implements NodeAction<TicketTriageState> {
     @Override
     public Map<String, Object> apply(TicketTriageState state) throws Exception {
         String answer = agent.answer(state.text());
-        return Map.of(TicketTriageState.ANSWER,
-                answer
+        return Map.of(TicketTriageState.ANSWER, answer,
+                TicketTriageState.EXECUTION_TRACE, state.traceWith("billingAnswer")
                 );
     }
 }

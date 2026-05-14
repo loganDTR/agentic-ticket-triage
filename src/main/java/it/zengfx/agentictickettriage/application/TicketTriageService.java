@@ -8,6 +8,7 @@ import it.zengfx.agentictickettriage.model.TriageResponse;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Locale;
 
 @Service
@@ -21,9 +22,10 @@ public class TicketTriageService {
         return new TriageResponse(
           finalState.text(),
           finalState.category(),
-          finalState.conficence(),
+          finalState.confidence(),
           finalState.route(),
-          finalState.answer()
+          finalState.answer(),
+          finalState.executionTrace()
         );
     }
 }
