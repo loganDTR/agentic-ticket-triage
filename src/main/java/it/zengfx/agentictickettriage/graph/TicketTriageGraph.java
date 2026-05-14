@@ -10,6 +10,7 @@ import java.util.Map;
 import static org.bsc.langgraph4j.StateGraph.END;
 import static org.bsc.langgraph4j.StateGraph.START;
 import static org.bsc.langgraph4j.action.AsyncNodeAction.node_async;
+import static org.bsc.langgraph4j.action.AsyncEdgeAction.edge_async;
 
 @Component
 public class TicketTriageGraph {
@@ -22,12 +23,32 @@ public class TicketTriageGraph {
         )
                 .addNode("classifyTicket", node_async(llmClassifyTicketNode))
                 .addNode("decideRoute", node_async(new DecideRouteNode()))
-                .addNode("generateAnswer", node_async(new GenerateAnswerNode()))
+                .addNode("billingAnswer", node_async(new BillingAnswerNode()))
+                .addNode("technicalAnswer", node_async(new TechnicalAnswerNode()))
+                .addNode("humanEscalationAnswer", node_async(new HumanEscalationAnswerNode()))
                 .addEdge(START, "classifyTicket")
                 .addEdge("classifyTicket", "decideRoute")
-                .addEdge("decideRoute", "generateAnswer")
-                .addEdge("generateAnswer", END)
+                .addConditionalEdges(
+                        "decideRoute",
+                        edge_async(this::routeToAnswerNode),
+                        Map.of(
+                                "billingAnswer", "billingAnswer",
+                                "technicalAnswer", "technicalAnswer",
+                                "humanEscalationAnswer", "humanEscalationAnswer"
+                        )
+                )
+                .addEdge("billingAnswer", END)
+                .addEdge("technicalAnswer", END)
+                .addEdge("humanEscalationAnswer", END)
                 .compile();
+    }
+
+    private String routeToAnswerNode(TicketTriageState state){
+        return switch(state.route()){
+            case "billingSupport" -> "billingAnswer";
+            case "technicalSupport" -> "technicalAnswer";
+            default -> "humanEscalationAnswer";
+        };
     }
 
     public TicketTriageState run(String text){
