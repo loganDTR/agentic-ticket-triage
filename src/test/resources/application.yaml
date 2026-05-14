@@ -1,0 +1,11 @@
+spring:
+  application:
+    name: agentic-ticket-triage
+
+langchain4j:
+  open-ai:
+    chat-model:
+      api-key: test-dummy-key
+      model-name: gpt-4o-mini
+      base-url: http://localhost:9999
+      temperature: 0.2
