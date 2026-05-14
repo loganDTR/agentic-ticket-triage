@@ -5,7 +5,7 @@ import java.util.List;
 public record TriageResponse(
         String originalText,
         TicketCategory category,
-        int conficence,
+        int confidence,
         String route,
         String answer,
         List<String> executionTrace
