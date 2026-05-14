@@ -15,12 +15,12 @@ import static org.bsc.langgraph4j.action.AsyncNodeAction.node_async;
 public class TicketTriageGraph {
     public final CompiledGraph<TicketTriageState> graph;
 
-    public TicketTriageGraph() throws GraphStateException {
+    public TicketTriageGraph(LlmClassifyTicketNode llmClassifyTicketNode) throws GraphStateException {
         this.graph = new StateGraph<>(
                 TicketTriageState.SCHEMA,
                 TicketTriageState::new
         )
-                .addNode("classifyTicket", node_async(new ClassifyTicketNode()))
+                .addNode("classifyTicket", node_async(llmClassifyTicketNode))
                 .addNode("decideRoute", node_async(new DecideRouteNode()))
                 .addNode("generateAnswer", node_async(new GenerateAnswerNode()))
                 .addEdge(START, "classifyTicket")
