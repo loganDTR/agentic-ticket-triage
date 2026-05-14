@@ -20,6 +20,7 @@ public class TicketTriageService {
     public TriageResponse triage(TriageRequest  request) {
         TicketTriageState finalState = ticketTriageGraph.run(request.text());
         return new TriageResponse(
+          finalState.executionId(),
           finalState.text(),
           finalState.category(),
           finalState.confidence(),

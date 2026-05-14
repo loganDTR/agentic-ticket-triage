@@ -6,6 +6,7 @@ import org.bsc.langgraph4j.StateGraph;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
+import java.util.UUID;
 
 import static org.bsc.langgraph4j.StateGraph.END;
 import static org.bsc.langgraph4j.StateGraph.START;
@@ -54,7 +55,10 @@ public class TicketTriageGraph {
     }
 
     public TicketTriageState run(String text){
-        return graph.invoke(Map.of(TicketTriageState.TEXT, text))
+        return graph.invoke(Map.of(
+                TicketTriageState.EXECUTION_ID, UUID.randomUUID().toString(),
+                TicketTriageState.TEXT, text
+                ))
                 .orElseThrow(() -> new IllegalStateException("Ticket triage graph returned no final state"));
     }
 }

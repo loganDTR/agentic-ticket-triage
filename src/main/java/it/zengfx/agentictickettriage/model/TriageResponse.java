@@ -3,6 +3,7 @@ package it.zengfx.agentictickettriage.model;
 import java.util.List;
 
 public record TriageResponse(
+        String executionId,
         String originalText,
         TicketCategory category,
         int confidence,
