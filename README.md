@@ -7,6 +7,7 @@ The API receives a ticket text and returns:
 - `confidence`
 - `route`
 - `answer`
+- `error`
 - `executionId`
 - `executionTrace`
 
@@ -27,6 +28,7 @@ Output (`TriageResponse`):
 - `confidence`: numeric confidence score (0-100)
 - `route`: selected downstream route (`billingSupport`, `technicalSupport`, `humanEscalation`)
 - `answer`: final user-facing answer
+- `error`: non-empty error message when a node fails, otherwise empty string
 - `executionTrace`: ordered list of executed nodes
 
 The goal is to make graph orchestration explicit and easy to inspect.
@@ -58,7 +60,7 @@ The goal is to make graph orchestration explicit and easy to inspect.
   - Tool-calling functions exposed to LLM agents (example: `InvoiceTool`).
 
 - **Configuration** (`config/`, `application.yaml`)
-  - OpenAI/LangChain model properties and Spring bean wiring.
+  - OpenAI/LangChain model properties, SpringDoc paths, H2/JPA settings.
 
 ### Framework responsibilities
 
@@ -179,6 +181,21 @@ Main config file: `src/main/resources/application.yaml`
 spring:
   application:
     name: agentic-ticket-triage
+  datasource:
+    url: jdbc:h2:mem:ticket-triage-db;DB_CLOSE_DELAY=-1
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: sa
+
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
 
 langchain4j:
   open-ai:
@@ -187,6 +204,12 @@ langchain4j:
       model-name: ${OPENAI_CHAT_MODEL:gpt-4o-mini}
       base-url: ${OPENAI_BASE_URL:https://api.openai.com/v1}
       temperature: ${OPENAI_TEMPERATURE:0.2}
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+  api-docs:
+    path: /v3/api-docs
 ```
 
 Key properties:
@@ -195,6 +218,9 @@ Key properties:
 - `langchain4j.open-ai.chat-model.model-name`
 - `langchain4j.open-ai.chat-model.base-url`
 - `langchain4j.open-ai.chat-model.temperature`
+- `springdoc.swagger-ui.path`
+- `springdoc.api-docs.path`
+- `spring.h2.console.path`
 
 Required environment variable:
 - `OPENAI_API_KEY` (must be set before startup)
@@ -212,9 +238,16 @@ Required environment variable:
 ### Start the app (PowerShell)
 
 ```powershell
+Set-Location "D:\dev\LangChain4j\agentic-ticket-triage"
 $env:OPENAI_API_KEY="<your-openai-api-key>"
 .\mvnw.cmd spring-boot:run
 ```
+
+### OpenAPI, Swagger UI and H2 Console
+
+- Swagger UI: `http://localhost:8080/swagger-ui.html`
+- OpenAPI JSON: `http://localhost:8080/v3/api-docs`
+- H2 Console: `http://localhost:8080/h2-console`
 
 ### Call the triage endpoint
 
@@ -234,6 +267,7 @@ Example response:
   "confidence": 87,
   "route": "billingSupport",
   "answer": "La fattura 123411 risulta OVERDUE. Vuoi che ti spieghi i prossimi passi?",
+  "error": "",
   "executionTrace": [
     "classifyTicket",
     "decideRoute",
@@ -246,8 +280,8 @@ Example response:
 
 ## 8) Current limitations
 
-- No persistence yet (state exists only during request execution).
-- No audit database yet (`executionTrace` is returned but not stored).
+- Audit persistence is available, but currently on in-memory H2 (data is lost on restart).
+- Stored audit is write-only for now (no dedicated read/query API yet).
 - `InvoiceTool` is a fake in-memory demo tool.
 - Error handling is still basic.
 - No checkpoint/resume support yet.
@@ -257,7 +291,8 @@ Example response:
 ## 9) Suggested next steps
 
 - Improve error handling and API-level error contracts.
-- Add persistent audit log (execution metadata + node-level events).
+- Move audit persistence from H2 in-memory to a durable database profile (e.g. PostgreSQL/MySQL).
+- Add audit query endpoints (list/detail/filter by `executionId`, category, route, date).
 - Add metrics per node (latency, token usage, failures).
 - Add a final reviewer/quality node before returning response.
 - Add more tools (CRM lookup, order status, SLA policy checks).
