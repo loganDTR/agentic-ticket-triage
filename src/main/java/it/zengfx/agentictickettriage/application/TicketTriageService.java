@@ -5,6 +5,7 @@ import it.zengfx.agentictickettriage.graph.TicketTriageState;
 import it.zengfx.agentictickettriage.model.TicketCategory;
 import it.zengfx.agentictickettriage.model.TriageRequest;
 import it.zengfx.agentictickettriage.model.TriageResponse;
+import it.zengfx.agentictickettriage.persistence.TicketTriageAuditEntity;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -16,9 +17,11 @@ import java.util.Locale;
 public class TicketTriageService {
 
     private final TicketTriageGraph ticketTriageGraph;
+    private final TicketTriageAuditService  ticketTriageAuditService;
 
     public TriageResponse triage(TriageRequest  request) {
         TicketTriageState finalState = ticketTriageGraph.run(request.text());
+        ticketTriageAuditService.save(finalState);
         return new TriageResponse(
           finalState.executionId(),
           finalState.text(),

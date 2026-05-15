@@ -52,6 +52,7 @@ class TicketTriageControllerTest {
                 92,
                 "billingSupport",
                 "La fattura 12345 risulta pagata.",
+                "",
                 List.of("classifyTicket", "decideRoute", "billingAnswer")
         );
         when(ticketTriageService.triage(any(TriageRequest.class))).thenReturn(mockResponse);
@@ -101,6 +102,7 @@ class TicketTriageControllerTest {
                 88,
                 "technicalSupport",
                 "Supporto tecnico.",
+                "",
                 List.of("classifyTicket", "decideRoute", "technicalAnswer")
         );
         when(ticketTriageService.triage(any(TriageRequest.class))).thenReturn(mockResponse);
