@@ -17,6 +17,12 @@ import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
 import java.util.List;
 
+import static it.zengfx.agentictickettriage.graph.TicketTriageFlowConstants.NodeId.BILLING_ANSWER;
+import static it.zengfx.agentictickettriage.graph.TicketTriageFlowConstants.NodeId.CLASSIFY_TICKET;
+import static it.zengfx.agentictickettriage.graph.TicketTriageFlowConstants.NodeId.DECIDE_ROUTE;
+import static it.zengfx.agentictickettriage.graph.TicketTriageFlowConstants.NodeId.TECHNICAL_ANSWER;
+import static it.zengfx.agentictickettriage.graph.TicketTriageFlowConstants.Route.BILLING_SUPPORT;
+import static it.zengfx.agentictickettriage.graph.TicketTriageFlowConstants.Route.TECHNICAL_SUPPORT;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -50,10 +56,10 @@ class TicketTriageControllerTest {
                 "Problema fattura 12345",
                 TicketCategory.BILLING,
                 92,
-                "billingSupport",
+                BILLING_SUPPORT,
                 "La fattura 12345 risulta pagata.",
                 "",
-                List.of("classifyTicket", "decideRoute", "billingAnswer")
+                List.of(CLASSIFY_TICKET, DECIDE_ROUTE, BILLING_ANSWER)
         );
         when(ticketTriageService.triage(any(TriageRequest.class))).thenReturn(mockResponse);
 
@@ -65,9 +71,9 @@ class TicketTriageControllerTest {
                 .andExpect(jsonPath("$.originalText").value("Problema fattura 12345"))
                 .andExpect(jsonPath("$.category").value("BILLING"))
                 .andExpect(jsonPath("$.confidence").value(92))
-                .andExpect(jsonPath("$.route").value("billingSupport"))
+                .andExpect(jsonPath("$.route").value(BILLING_SUPPORT))
                 .andExpect(jsonPath("$.answer").value("La fattura 12345 risulta pagata."))
-                .andExpect(jsonPath("$.executionTrace[0]").value("classifyTicket"));
+                .andExpect(jsonPath("$.executionTrace[0]").value(CLASSIFY_TICKET));
     }
 
     @Test
@@ -100,10 +106,10 @@ class TicketTriageControllerTest {
                 "Errore di login",
                 TicketCategory.TECHNICAL,
                 88,
-                "technicalSupport",
+                TECHNICAL_SUPPORT,
                 "Supporto tecnico.",
                 "",
-                List.of("classifyTicket", "decideRoute", "technicalAnswer")
+                List.of(CLASSIFY_TICKET, DECIDE_ROUTE, TECHNICAL_ANSWER)
         );
         when(ticketTriageService.triage(any(TriageRequest.class))).thenReturn(mockResponse);
 
@@ -112,6 +118,6 @@ class TicketTriageControllerTest {
                         .content(objectMapper.writeValueAsString(new TriageRequest("Errore di login"))))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.category").value("TECHNICAL"))
-                .andExpect(jsonPath("$.route").value("technicalSupport"));
+                                .andExpect(jsonPath("$.route").value(TECHNICAL_SUPPORT));
     }
 }

@@ -8,6 +8,10 @@ import org.bsc.langgraph4j.action.NodeAction;
 
 import java.util.Map;
 
+import static it.zengfx.agentictickettriage.graph.TicketTriageFlowConstants.Route.HUMAN_ESCALATION;
+import static it.zengfx.agentictickettriage.graph.TicketTriageFlowConstants.Trace.BILLING_ANSWER;
+import static it.zengfx.agentictickettriage.graph.TicketTriageFlowConstants.Trace.BILLING_ANSWER_ERROR;
+
 public class BillingAnswerNode implements NodeAction<TicketTriageState> {
     private final BillingAgent agent;
 
@@ -23,14 +27,14 @@ public class BillingAnswerNode implements NodeAction<TicketTriageState> {
         try{
             String answer = agent.answer(state.text());
             return Map.of(TicketTriageState.ANSWER, answer,
-                    TicketTriageState.EXECUTION_TRACE, state.traceWith("billingAnswer")
+                    TicketTriageState.EXECUTION_TRACE, state.traceWith(BILLING_ANSWER)
             );
         }catch (Exception e){
             return Map.of(
                     TicketTriageState.ANSWER, "Non riesco a recuperare le informazioni di fatturazione in questo momento. Escalo a un operatore umano.",
-                    TicketTriageState.ROUTE,"humanEscalation",
+                    TicketTriageState.ROUTE, HUMAN_ESCALATION,
                     TicketTriageState.ERROR, "Billing answer failed: " + e.getClass().getSimpleName(),
-                    TicketTriageState.EXECUTION_TRACE, state.traceWith("billingAnswer:error")
+                    TicketTriageState.EXECUTION_TRACE, state.traceWith(BILLING_ANSWER_ERROR)
             );
         }
     }

@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import static it.zengfx.agentictickettriage.graph.TicketTriageFlowConstants.Trace.CLASSIFY_TICKET;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -64,7 +65,7 @@ class LlmClassifyTicketNodeTest {
 
         @SuppressWarnings("unchecked")
         List<String> trace = (List<String>) result.get(TicketTriageState.EXECUTION_TRACE);
-        assertThat(trace).contains("classifyTicket");
+        assertThat(trace).contains(CLASSIFY_TICKET);
     }
 
     @Test

@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import static it.zengfx.agentictickettriage.graph.TicketTriageFlowConstants.Route.BILLING_SUPPORT;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class TicketTriageStateTest {
@@ -49,8 +50,8 @@ class TicketTriageStateTest {
 
     @Test
     void routeReturnsStoredValue() {
-        TicketTriageState state = new TicketTriageState(Map.of(TicketTriageState.ROUTE, "billingSupport"));
-        assertThat(state.route()).isEqualTo("billingSupport");
+        TicketTriageState state = new TicketTriageState(Map.of(TicketTriageState.ROUTE, BILLING_SUPPORT));
+        assertThat(state.route()).isEqualTo(BILLING_SUPPORT);
     }
 
     @Test

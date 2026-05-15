@@ -4,13 +4,15 @@ import org.bsc.langgraph4j.action.NodeAction;
 
 import java.util.Map;
 
+import static it.zengfx.agentictickettriage.graph.TicketTriageFlowConstants.Trace.TECHNICAL_ANSWER;
+
 public class TechnicalAnswerNode implements NodeAction<TicketTriageState> {
 
     @Override
     public Map<String, Object> apply(TicketTriageState state) throws Exception {
         return Map.of(TicketTriageState.ANSWER,
                 "Sembra un problema tecnico. Ti indirizzo al team di supporto tecnico",
-                TicketTriageState.EXECUTION_TRACE, state.traceWith("technicalAnswer")
+                TicketTriageState.EXECUTION_TRACE, state.traceWith(TECHNICAL_ANSWER)
         );
     }
 }

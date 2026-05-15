@@ -11,6 +11,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import static it.zengfx.agentictickettriage.graph.TicketTriageFlowConstants.NodeId.CLASSIFY_TICKET;
+import static it.zengfx.agentictickettriage.graph.TicketTriageFlowConstants.NodeId.DECIDE_ROUTE;
+import static it.zengfx.agentictickettriage.graph.TicketTriageFlowConstants.Trace.BILLING_ANSWER;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -44,7 +47,7 @@ class BillingAnswerNodeTest {
     @Test
     void addsBillingAnswerToExecutionTrace() throws Exception {
         when(mockAgent.answer("Stato fattura 12345")).thenReturn("La fattura 12345 risulta PAGATA.");
-        List<String> existing = new ArrayList<>(List.of("classifyTicket", "decideRoute"));
+        List<String> existing = new ArrayList<>(List.of(CLASSIFY_TICKET, DECIDE_ROUTE));
         TicketTriageState state = new TicketTriageState(Map.of(
                 TicketTriageState.TEXT, "Stato fattura 12345",
                 TicketTriageState.EXECUTION_TRACE, existing
@@ -54,7 +57,7 @@ class BillingAnswerNodeTest {
 
         @SuppressWarnings("unchecked")
         List<String> trace = (List<String>) result.get(TicketTriageState.EXECUTION_TRACE);
-        assertThat(trace).containsExactly("classifyTicket", "decideRoute", "billingAnswer");
+        assertThat(trace).containsExactly(CLASSIFY_TICKET, DECIDE_ROUTE, BILLING_ANSWER);
     }
 
     @Test
@@ -66,6 +69,6 @@ class BillingAnswerNodeTest {
 
         @SuppressWarnings("unchecked")
         List<String> trace = (List<String>) result.get(TicketTriageState.EXECUTION_TRACE);
-        assertThat(trace).containsExactly("billingAnswer");
+        assertThat(trace).containsExactly(BILLING_ANSWER);
     }
 }

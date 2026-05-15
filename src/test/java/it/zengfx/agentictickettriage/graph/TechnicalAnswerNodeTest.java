@@ -6,6 +6,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import static it.zengfx.agentictickettriage.graph.TicketTriageFlowConstants.NodeId.CLASSIFY_TICKET;
+import static it.zengfx.agentictickettriage.graph.TicketTriageFlowConstants.NodeId.DECIDE_ROUTE;
+import static it.zengfx.agentictickettriage.graph.TicketTriageFlowConstants.Trace.TECHNICAL_ANSWER;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class TechnicalAnswerNodeTest {
@@ -22,14 +25,14 @@ class TechnicalAnswerNodeTest {
 
     @Test
     void addsTechnicalAnswerToExecutionTrace() throws Exception {
-        List<String> existing = new ArrayList<>(List.of("classifyTicket", "decideRoute"));
+        List<String> existing = new ArrayList<>(List.of(CLASSIFY_TICKET, DECIDE_ROUTE));
         TicketTriageState state = new TicketTriageState(Map.of(
                 TicketTriageState.EXECUTION_TRACE, existing
         ));
         Map<String, Object> result = node.apply(state);
         @SuppressWarnings("unchecked")
         List<String> trace = (List<String>) result.get(TicketTriageState.EXECUTION_TRACE);
-        assertThat(trace).containsExactly("classifyTicket", "decideRoute", "technicalAnswer");
+        assertThat(trace).containsExactly(CLASSIFY_TICKET, DECIDE_ROUTE, TECHNICAL_ANSWER);
     }
 
     @Test
@@ -38,6 +41,6 @@ class TechnicalAnswerNodeTest {
         Map<String, Object> result = node.apply(state);
         @SuppressWarnings("unchecked")
         List<String> trace = (List<String>) result.get(TicketTriageState.EXECUTION_TRACE);
-        assertThat(trace).containsExactly("technicalAnswer");
+        assertThat(trace).containsExactly(TECHNICAL_ANSWER);
     }
 }
