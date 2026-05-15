@@ -20,9 +20,18 @@ public class BillingAnswerNode implements NodeAction<TicketTriageState> {
 
     @Override
     public Map<String, Object> apply(TicketTriageState state) throws Exception {
-        String answer = agent.answer(state.text());
-        return Map.of(TicketTriageState.ANSWER, answer,
-                TicketTriageState.EXECUTION_TRACE, state.traceWith("billingAnswer")
-                );
+        try{
+            String answer = agent.answer(state.text());
+            return Map.of(TicketTriageState.ANSWER, answer,
+                    TicketTriageState.EXECUTION_TRACE, state.traceWith("billingAnswer")
+            );
+        }catch (Exception e){
+            return Map.of(
+                    TicketTriageState.ANSWER, "Non riesco a recuperare le informazioni di fatturazione in questo momento. Escalo a un operatore umano.",
+                    TicketTriageState.ROUTE,"humanEscalation",
+                    TicketTriageState.ERROR, "Billing answer failed: " + e.getClass().getSimpleName(),
+                    TicketTriageState.EXECUTION_TRACE, state.traceWith("billingAnswer:error")
+            );
+        }
     }
 }

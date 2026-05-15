@@ -10,6 +10,14 @@ public class DecideRouteNode implements NodeAction<TicketTriageState> {
 
     @Override
     public Map<String, Object> apply(TicketTriageState state) throws Exception {
+
+        if(state.hasError()){
+            return Map.of(
+                    TicketTriageState.ROUTE, "humanEscalation",
+                    TicketTriageState.EXECUTION_TRACE, state.traceWith("decideRoute:errorFallback")
+            );
+        }
+
         if (state.confidence() < MIN_CONFIDENCE) {
             return Map.of(TicketTriageState.ROUTE, "humanEscalation",
                     TicketTriageState.EXECUTION_TRACE, state.traceWith("decideRoute")

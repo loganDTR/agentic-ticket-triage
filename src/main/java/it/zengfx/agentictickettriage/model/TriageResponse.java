@@ -9,5 +9,6 @@ public record TriageResponse(
         int confidence,
         String route,
         String answer,
+        String error,
         List<String> executionTrace
 ) {}

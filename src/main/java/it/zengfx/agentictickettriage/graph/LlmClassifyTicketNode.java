@@ -19,11 +19,21 @@ public class LlmClassifyTicketNode  implements NodeAction<TicketTriageState> {
 
     @Override
     public Map<String, Object> apply(TicketTriageState state) {
-        ClassificationResult result = agent.classify(state.text());
-        return Map.of(
-                TicketTriageState.CATEGORY, result.category(),
-                TicketTriageState.CONFIDENCE, result.confidence(),
-                TicketTriageState.EXECUTION_TRACE, state.traceWith("classifyTicket")
-        );
+        try{
+            ClassificationResult result = agent.classify(state.text());
+            return Map.of(
+                    TicketTriageState.CATEGORY, result.category(),
+                    TicketTriageState.CONFIDENCE, result.confidence(),
+                    TicketTriageState.EXECUTION_TRACE, state.traceWith("classifyTicket")
+            );
+        }catch(Exception e){
+            return Map.of(
+                    TicketTriageState.CATEGORY, TicketCategory.ESCALATION,
+                    TicketTriageState.CONFIDENCE, 0,
+                    TicketTriageState.ROUTE, "humanEscalation",
+                    TicketTriageState.ERROR, "Classification failed: " + e.getClass().getSimpleName(),
+                    TicketTriageState.EXECUTION_TRACE, state.traceWith("classifyTicket:error")
+            );
+        }
     }
 }

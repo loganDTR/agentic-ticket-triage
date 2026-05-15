@@ -17,6 +17,7 @@ public class TicketTriageState extends AgentState {
     public static final String ANSWER = "answer";
     public static final String EXECUTION_TRACE = "executionTrace";
     public static final String EXECUTION_ID = "executionId";
+    public static final String ERROR = "error";
 
     public static final Map<String, Channel<?>> SCHEMA = Map.of(
             TEXT, Channels.base(() -> ""),
@@ -25,7 +26,8 @@ public class TicketTriageState extends AgentState {
             ROUTE, Channels.base(() -> ""),
             ANSWER, Channels.base(() -> ""),
             EXECUTION_TRACE, Channels.base(ArrayList::new),
-            EXECUTION_ID, Channels.base(() -> "")
+            EXECUTION_ID, Channels.base(() -> ""),
+            ERROR, Channels.base(() -> "")
     );
 
     public TicketTriageState(Map<String, Object> initData) {
@@ -65,5 +67,13 @@ public class TicketTriageState extends AgentState {
 
     public String executionId() {
         return this.<String>value(EXECUTION_ID).orElse("");
+    }
+
+    public String error() {
+        return this.<String>value(ERROR).orElse("");
+    }
+
+    public boolean hasError() {
+        return !error().isBlank();
     }
 }

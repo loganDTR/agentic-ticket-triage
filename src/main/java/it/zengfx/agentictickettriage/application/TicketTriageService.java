@@ -26,6 +26,7 @@ public class TicketTriageService {
           finalState.confidence(),
           finalState.route(),
           finalState.answer(),
+          finalState.error(),
           finalState.executionTrace()
         );
     }
