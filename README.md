@@ -1,6 +1,6 @@
 # Agentic Ticket Triage (Spring Boot + LangGraph4j)
 
-Small educational project that shows how to orchestrate a **stateful, multi-node ticket triage workflow** in Spring Boot using LangGraph-style execution.
+Reference project exploring how to orchestrate a **stateful, multi-node AI ticket triage workflow** in Spring Boot using LangChain4j and LangGraph4j.
 
 The API receives a ticket text and returns:
 - `classification` (`category`)
@@ -77,16 +77,20 @@ The goal is to make graph orchestration explicit and easy to inspect.
 
 ## 3) Workflow diagram
 
-```text
-START
-  -> classifyTicket
-  -> decideRoute
-  -> conditional edge
-      -> billingAnswer
-      -> technicalAnswer
-      -> humanEscalationAnswer
-  -> END
+```mermaid
+flowchart LR
+    A[Ticket API] --> B[Classify Ticket]
+    B --> C[Decide Route]
+    C -->|Billing| D[Billing Answer]
+    C -->|Technical| E[Technical Answer]
+    C -->|Low confidence / escalation| F[Human Escalation]
+    D --> G[Invoice Tool]
+    D --> H[End]
+    E --> H
+    F --> H
 ```
+
+The workflow keeps orchestration explicit: classification, routing and downstream handling are modeled as separate graph nodes, while low-confidence cases are routed to human escalation rather than being forced through an automated path.
 
 ---
 
